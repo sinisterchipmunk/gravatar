@@ -10,7 +10,8 @@ rather than just a URL to that data. This saves you the extra step of having to 
 
 gem install gravitar-ultimate
 
-=== Activate the gem...
+== Activate the gem...
+
 As with any gem, you have to type a few lines to tell Ruby to actually *use* it. Here's how to do that...
 
 ==== ...in Ruby on Rails
