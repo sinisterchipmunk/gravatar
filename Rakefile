@@ -12,7 +12,7 @@ This gem is used to interface with the entire Gravatar API: it's not just for ge
 to and communicating with the XML-RPC API too! Additionally, it can be used to download the Gravatar image data itself,
 rather than just a URL to that data. This saves you the extra step of having to do so.}
     gem.email = "sinisterchipmunk@gmail.com"
-    gem.homepage = "http://github.com/sinisterchipmunk/gravatar"
+    gem.homepage = "http://www.thoughtsincomputation.com/"
     gem.authors = ["Colin MacKenzie IV"]
     gem.add_dependency "sc-core-ext", ">= 1.2.0"
     gem.add_development_dependency "rspec", ">= 1.3.0"
