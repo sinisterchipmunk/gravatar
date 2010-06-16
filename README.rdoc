@@ -14,11 +14,15 @@ gem install gravitar-ultimate
 
 As with any gem, you have to type a few lines to tell Ruby to actually *use* it. Here's how to do that...
 
-==== ...in Ruby on Rails
+==== ...in Ruby on Rails (v3.x)
+
+* This isn't ready yet, but it's in the works.
+
+==== ...in Ruby on Rails (v2.x)
 
 * Edit your config/environment.rb file
 * Add this line beneath "Rails::Initializer.run do |config|":
-  * config.gem 'gravitar-ultimate'
+   config.gem 'gravitar-ultimate'
 
 ==== ...in vanilla Ruby
 
