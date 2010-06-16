@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Gravatar do
+  it "should have a valid version number" do
+    Gravatar.version.should =~ /^\d+\.\d+\.\d+$/
+  end
+
   it "should allow setting cache duration by instance" do
     grav = Gravatar.new($credentials[:primary_email])
     grav.cache_duration = 10.minutes

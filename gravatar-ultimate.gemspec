@@ -27,6 +27,7 @@ rather than just a URL to that data. This saves you the extra step of having to 
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "gravatar-ultimate.gemspec",
      "lib/gravatar-ultimate.rb",
      "lib/gravatar.rb",
      "lib/gravatar/cache.rb",
