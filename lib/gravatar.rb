@@ -78,7 +78,12 @@ class Gravatar
   #
   # This method is cached for up to the value of @duration or Gravatar.duration.
   def addresses
-    cache('addresses') { call('grav.addresses') }
+    cache('addresses') do
+      call('grav.addresses').inject({}) do |hash, (address, info)|
+        hash[address] = info.merge(:rating => rating(info[:rating]))
+        hash
+      end
+    end
   end
 
   # Returns a hash of user images for this account in the following format:
@@ -86,7 +91,12 @@ class Gravatar
   #
   # This method is cached for up to the value of @duration or Gravatar.duration.
   def user_images
-    cache('user_images') { call('grav.userimages') }
+    cache('user_images') do
+      call('grav.userimages').inject({}) do |hash, (key, array)|
+        hash[key] = [rating(array.first), array.last]
+        hash
+      end
+    end
   end
 
   # Saves binary image data as a userimage for this account and returns the ID of the image.
@@ -108,10 +118,14 @@ class Gravatar
   #   { email_address => true/false }
   #
   # This method is not cached.
+  #
+  # This method will clear out the cache, since it may have an effect on what the API methods respond with.
   def use_user_image!(image_hash, *email_addresses)
     hashed_email_addresses = normalize_email_addresses(email_addresses)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
-    dehashify_emails(hash, email_addresses) { |value| boolean(value) }
+    returning dehashify_emails(hash, email_addresses) { |value| boolean(value) } do
+      expire_cache!
+    end
   end
   alias use_image! use_user_image!
 
@@ -120,18 +134,26 @@ class Gravatar
   #   know what the deal with that is, drop me a line so I can update this documentation!
   #
   # This method is not cached.
+  #
+  # This method will clear out the cache, since it may have an effect on what the API methods respond with.
   def remove_image!(*emails)
     hashed_email_addresses = normalize_email_addresses(emails)
     hash = call('grav.removeImage', :addresses => hashed_email_addresses)
-    dehashify_emails(hash, emails) { |value| boolean(value) }
+    returning dehashify_emails(hash, emails) { |value| boolean(value) } do
+      expire_cache!
+    end
   end
 
   # Remove a userimage from the account and any email addresses with which it is associated. Returns
   # true or false.
   #
   # This method is not cached.
+  #
+  # This method will clear out the cache, since it may have an effect on what the API methods respond with.
   def delete_user_image!(userimage)
-    boolean(call('grav.deleteUserimage', :userimage => userimage))
+    returning boolean(call('grav.deleteUserimage', :userimage => userimage)) do
+      expire_cache!
+    end
   end
 
   # Runs a simple Gravatar test. Useful for debugging. Gravatar will echo back any arguments you pass.
@@ -180,6 +202,10 @@ class Gravatar
   private
   def cache(*key, &block)
     @cache.call(*key, &block)
+  end
+
+  def expire_cache!
+    @cache.clear!
   end
 
   def dehashify_emails(response, emails)

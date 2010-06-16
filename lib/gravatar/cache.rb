@@ -34,6 +34,12 @@ class Gravatar
       end
     end
 
+    # Clears out the entire cache for this object's namespace. This actually removes the objects,
+    # instead of simply marking them as expired, so it will be as if the object never existed.
+    def clear!
+      @real_cache.delete_matched(/^#{Regexp::escape @namespace}/)
+    end
+
     # forces the specified key to become expired
     def expire!(*key)
       unless expired?(*key)

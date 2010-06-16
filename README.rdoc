@@ -47,10 +47,19 @@ After you have that, things get a lot easier:
   api.use_user_image!(handle, an_email_address) #=> uses the specified image handle for the specified email address(es)
   api.exists?("another@example.com")            #=> true or false, depending on whether the specified email exists.
 
-As you can see this is quite powerful. But it gets better. Gravatar Ultimate actually manages caching for you! That way,
-if an error occurs, (such as the Gravatar site being offline), your code won't break. It'll instead gracefully fall
-back to the cached copy! By default, if you are using Rails, it'll use the Rails cache. Otherwise, it'll use whatever
-cache you're using with Gravatar (by default an instance of ActiveSupport::Cache::FileStore).
+
+== Caching
+
+As you can see this is quite powerful. But it gets better. Gravatar Ultimate even manages caching of API responses for
+you! That way, if an error occurs, (such as the Gravatar site being offline), your code won't break. It'll instead
+gracefully fall back to the cached copy! By default, if you are using Rails, it'll use the Rails cache. Otherwise, it'll
+use whatever cache you're using with Gravatar (by default an instance of ActiveSupport::Cache::FileStore).
+
+This has obvious benefits when used for the API calls that do not result in changing the user's profile, but what you
+might not have thought of yet is that it also caches #image_data, so you can hook your application up to that method
+without fear of what might happen to all those Gravatar images if the Gravatar server should be unavailable!
+
+To customize exactly which cache is used, see the next section...
 
 === Configuration
 
