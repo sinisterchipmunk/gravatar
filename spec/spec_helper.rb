@@ -4,6 +4,14 @@ unless defined?(Spec)
   require 'spec'
 end
 
+def image_data
+  File.read(File.expand_path("../fixtures/image.jpg", __FILE__))
+end
+
+require 'fakeweb'
+FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/5d8c7a8d951a28e10bd7407f33df6d63", :response =>
+        "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +image_data)
+
 def new_cache
   ActiveSupport::Cache::MemoryStore.new
 end

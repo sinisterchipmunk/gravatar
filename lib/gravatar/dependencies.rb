@@ -9,16 +9,8 @@ unless defined?(ScCoreExt) || defined?(Rails) # because Rails will load it later
   require 'sc-core-ext'
 end
 
-
 # The rest of this is core Ruby stuff so it's safe to load immediately, even if Rails is running the show.
-unless defined?(Digest)
-  require "digest/md5"
-end
-
-unless defined?(XMLRPC)
-  require 'xmlrpc/client'
-end
-
-unless defined?(Base64)
-  require 'base64'
-end
+require 'open-uri'
+require "digest/md5"
+require 'xmlrpc/client'
+require 'base64'

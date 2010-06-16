@@ -1,8 +1,16 @@
 require 'spec_helper'
 
 describe Gravatar do
-  def image_data
-    File.read(File.expand_path("../../fixtures/image.jpg", __FILE__))
+  it "should allow setting cache duration by instance" do
+    grav = Gravatar.new($credentials[:primary_email])
+    grav.cache_duration = 10.minutes
+    grav.cache_duration.should == 10.minutes
+  end
+
+  it "should allow setting cache duration globally" do
+    Gravatar.duration = 10.minutes
+    Gravatar.new($credentials[:primary_email]).cache_duration.should == 10.minutes
+    Gravatar.duration = 30.minutes
   end
 
   it "should require :email" do
@@ -89,6 +97,10 @@ describe Gravatar do
 
     it "should return gravatar image_url" do
       subject.image_url.should == "http://www.gravatar.com/avatar/5d8c7a8d951a28e10bd7407f33df6d63"
+    end
+
+    it "should return gravitar image data" do
+      subject.image_data.should == image_data
     end
 
     it "should return gravatar image_url with SSL" do

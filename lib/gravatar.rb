@@ -39,6 +39,16 @@ class Gravatar
     end
   end
 
+  # The duration of the cache for this instance of Gravatar, independent of any other instance
+  def cache_duration
+    @cache.duration
+  end
+
+  # Sets the duration of the cache for this instance of Gravatar, independent of any other instance
+  def cache_duration=(time)
+    @cache.duration = time
+  end
+
   # Check whether one or more email addresses have corresponding avatars. If no email addresses are
   # specified, the one associated with this object is used.
   #
@@ -118,17 +128,16 @@ class Gravatar
   end
 
   def image_url(options = {})
-    proto = "http#{options[:ssl] ? 's' : ''}"
-    sub = options[:ssl] ? "secure" : "www"
+    secure = options[:ssl] || options[:secure]
+    proto = "http#{secure ? 's' : ''}"
+    sub = secure ? "secure" : "www"
 
     "#{proto}://#{sub}.gravatar.com/avatar/#{email_hash}#{extension_for_image(options)}#{query_for_image(options)}"
   end
 
   # Returns the image data for this user's gravatar image. This is the same as reading the data at #image_url.
   def image_data(options = {})
-    cache('image_data') do
-      raise 'not implemented'
-    end
+    OpenURI.open_uri(URI.parse(image_url(options))).read
   end
 
   private

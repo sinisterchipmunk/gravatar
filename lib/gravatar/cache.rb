@@ -1,7 +1,8 @@
 class Gravatar
   # A wrapper around any given Cache object which provides Gravatar-specific helpers. Used internally.
   class Cache
-    attr_reader :duration, :real_cache, :namespace
+    attr_reader :real_cache, :namespace
+    attr_accessor :duration
 
     def initialize(real_cache, duration, namespace = nil)
       @duration = duration
