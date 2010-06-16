@@ -2,16 +2,18 @@ require "spec_helper"
 
 describe "Dependencies" do
   context "within Rails" do
-    module ::Rails
-      def self.configuration
-        return @config if @config
-        @config = Object.new
-        klass = class << @config; self; end
-        klass.instance_eval do
-          def gem(*a, &b); end
-          public :gem
+    before(:each) do
+      module ::Rails
+        def self.configuration
+          return @config if @config
+          @config = Object.new
+          klass = class << @config; self; end
+          klass.instance_eval do
+            def gem(*a, &b); end
+            public :gem
+          end
+          @config
         end
-        @config
       end
     end
 

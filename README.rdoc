@@ -1,6 +1,75 @@
-= gravatar
+= gravatar-ultimate
 
-Description goes here.
+The Ultimate Gravatar Gem!
+
+This gem is used to interface with the entire Gravatar API: it's not just for generating image URLs, but for connecting
+to and communicating with the XML-RPC API too! Additionally, it can be used to download the Gravatar image data itself,
+rather than just a URL to that data. This saves you the extra step of having to do so.
+
+== Installation
+
+gem install gravitar-ultimate
+
+=== Activate the gem...
+As with any gem, you have to type a few lines to tell Ruby to actually *use* it. Here's how to do that...
+
+==== ...in Ruby on Rails
+
+* Edit your config/environment.rb file
+* Add this line beneath "Rails::Initializer.run do |config|":
+  * config.gem 'gravitar-ultimate'
+
+==== ...in vanilla Ruby
+
+  require 'rubygems'
+  gem 'gravitar-ultimate'
+  require 'gravitar-ultimate'
+
+== Usage
+Using the gem is actually pretty simple. Let's say you want the Gravatar image URL for "generic@example.com":
+  url = Gravatar.new("generic@example.com").image_url
+
+Cool, huh? Let's take it a step further and grab the actual image *data* so that we can render it on the screen:
+  data = Gravatar.new("generic@example.com").image_data
+
+Fine, but how about the rest of the API as advertised at http://en.gravatar.com/site/implement/xmlrpc? Well, for
+that you need either the user's Gravatar password, or their API key:
+
+  api = Gravatar.new("generic@example.com", :password => "helloworld")
+  api = Gravatar.new("generic@example.com", :api_key => "AbCdEfG1234")
+
+After you have that, things get a lot easier:
+
+  api.exists?                                   #=> true or false, depending on whether this user has an account.
+  api.addresses                                 #=> a list of email addresses and their corresponding images
+  api.save_data!(rating, image_data)            #=> saves an image to this user's account and returns a handle to it
+  api.use_user_image!(handle, an_email_address) #=> uses the specified image handle for the specified email address(es)
+  api.exists?("another@example.com")            #=> true or false, depending on whether the specified email exists.
+
+As you can see this is quite powerful. But it gets better. Gravatar Ultimate actually manages caching for you! That way,
+if an error occurs, (such as the Gravatar site being offline), your code won't break. It'll instead gracefully fall
+back to the cached copy! By default, if you are using Rails, it'll use the Rails cache. Otherwise, it'll use whatever
+cache you're using with Gravatar (by default an instance of ActiveSupport::Cache::FileStore).
+
+=== Configuration
+
+To see settings and options you can give for a particular Gravatar instance, check out the Gravatar class documentation.
+There are a few things you can set for Gravatar on a system-wide basis, and that's what we'll go over next.
+
+For a non-Rails project, simply set these options before you start using Gravatar. For a Rails project, you should set
+them within an Initializer in config/initializers/any_filename.rb in order to ensure that the settings are applied
+(A) after Gravatar has been included into the project, and (B) before it is actually used by Rails.
+
+  # You can set the default cache for Gravatar to use:
+  Gravatar.cache = ActiveSupport::Cache::SynchronizedMemoryStore.new
+
+  # You can also set the length of time an item in the Gravatar cache is valid. Default is 24.hours
+  Gravatar.duration = 20.minutes
+
+  # You can also change the logger used by default. It's worth mentioning that, once again, Gravatar will use
+  # the Rails logger if it's available. Otherwise, the default is $stdout.
+  grav_log = ""
+  Gravatar.logger = StringIO.new(grav_log) # logs Gravatar output to a String
 
 == Note on Patches/Pull Requests
  

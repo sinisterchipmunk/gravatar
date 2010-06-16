@@ -1,20 +1,8 @@
 require File.expand_path('../gravatar/dependencies', __FILE__)
 require File.expand_path("../gravatar/cache", __FILE__)
 
-# Connecting
-# API Endpoint: https://secure.gravatar.com/xmlrpc?user=[email_hash]
+# ==== Errors ====
 #
-# It is mandatory that you connect to secure.gravatar.com, and that you do so over HTTPS. This is for the safety of our
-# mutual users. The email_hash GET parameter is the md5 hash of the users email address after it has been lowercased,
-# and trimmed.
-#
-# Authentication
-# User authentication happens at the api method level. You will pass to the method call an apikey or password parameter.
-# The data for these parameters will be passed in plain text. Only one valid form of authentication is necessary. The
-# apikey and password params are always stripped from the arguments before the methods begin their processing. For this
-# reason you should expect not to see either of these values returned from the grav.test method.
-#
-# Errors
 # Errors usually come with a number and human readable text. Generally the text should be followed whenever possible,
 # but a brief description of the numeric error codes are as follows:
 #
@@ -28,11 +16,23 @@ require File.expand_path("../gravatar/cache", __FILE__)
 class Gravatar
   attr_reader :email
 
+  # Creates a new instance of Gravatar. Valid options include:
+  #   :password                   => the password for this account, to be used instead of :api_key (don't supply both)
+  #   :api_key or :apikey or :key => the API key for this account, to be used instead of :password (don't supply both)
+  #   :duration                   => the cache duration to use for this instance
+  #   :logger                     => the logger to use for this instance
+  #
+  # Note that :password and :api_key are both optional. If omitted, no web services will be available but this
+  # user's Gravatar image can still be constructed using #image_uri or #image_data.
+  #
   def initialize(email, options = {})
     raise ArgumentError, "Expected :email" unless email
     @options = options || {}
     @email = email
-    @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration, "gravatar-#{email_hash}")
+
+    pw_or_key = auth.keys.first || :none
+    @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration,
+                                 "gravatar-#{email_hash}-#{pw_or_key}", options[:logger] || self.class.logger)
     
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
@@ -53,6 +53,8 @@ class Gravatar
   # specified, the one associated with this object is used.
   #
   # Returns: Boolean for a single email address; a hash of emails => booleans for multiple addresses.
+  #
+  # This method is cached for up to the value of @duration or Gravatar.duration.
   def exists?(*emails)
     hashed_emails = normalize_email_addresses(emails)
     cache('exists', hashed_emails) do
@@ -73,29 +75,39 @@ class Gravatar
   #      :userimage_url => userimage_url
   #    }
   #  }
+  #
+  # This method is cached for up to the value of @duration or Gravatar.duration.
   def addresses
     cache('addresses') { call('grav.addresses') }
   end
 
   # Returns a hash of user images for this account in the following format:
   #   { user_img_hash => [rating, url] }
+  #
+  # This method is cached for up to the value of @duration or Gravatar.duration.
   def user_images
     cache('user_images') { call('grav.userimages') }
   end
 
   # Saves binary image data as a userimage for this account and returns the ID of the image.
+  #
+  # This method is not cached.
   def save_data!(rating, data)
     call('grav.saveData', :data => Base64.encode64(data), :rating => _rating(rating))
   end
   alias save_image! save_data!
 
   # Read an image via its URL and save that as a userimage for this account, returning true or false
+  #
+  # This method is not cached.
   def save_url!(rating, url)
     call('grav.saveUrl', :url => url, :rating => _rating(rating))
   end
 
   # Use a userimage as a gravatar for one or more addresses on this account. Returns a hash:
   #   { email_address => true/false }
+  #
+  # This method is not cached.
   def use_user_image!(image_hash, *email_addresses)
     hashed_email_addresses = normalize_email_addresses(email_addresses)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
@@ -106,6 +118,8 @@ class Gravatar
   # Remove the userimage associated with one or more email addresses. Returns a hash of booleans.
   #   NOTE: This appears to always return false, even when it is really removing an image. If you
   #   know what the deal with that is, drop me a line so I can update this documentation!
+  #
+  # This method is not cached.
   def remove_image!(*emails)
     hashed_email_addresses = normalize_email_addresses(emails)
     hash = call('grav.removeImage', :addresses => hashed_email_addresses)
@@ -114,19 +128,34 @@ class Gravatar
 
   # Remove a userimage from the account and any email addresses with which it is associated. Returns
   # true or false.
+  #
+  # This method is not cached.
   def delete_user_image!(userimage)
     boolean(call('grav.deleteUserimage', :userimage => userimage))
   end
 
+  # Runs a simple Gravatar test. Useful for debugging. Gravatar will echo back any arguments you pass.
+  # This method is not cached.
   def test(hash)
     call('grav.test', hash)
   end
 
-  
+  # Returns the MD5 hash for the specified email address, or the one associated with this object.
   def email_hash(email = self.email)
     Digest::MD5.hexdigest(email.downcase.strip)
   end
 
+  # Returns the URL for this user's gravatar image. Options include:
+  #
+  #   :ssl     or :secure    if true, HTTPS will be used instead of HTTP. Default is false.
+  #   :rating  or :r         a rating threshold for this image. Can be one of [ :g, :pg, :r, :x ]. Default is :g.
+  #   :size    or :s         a size for this image. Can be anywhere between 1 and 512. Default is 80.
+  #   :default or :d         a default URL for this image to display if the specified user has no image;
+  #                          or this can be one of [ :identicon, :monsterid, :wavatar, 404 ]. By default a generic
+  #                          Gravatar image URL will be returned.
+  #   :filetype              an extension such as :jpg or :png. Default is omitted.
+  #
+  # See http://en.gravatar.com/site/implement/url for much more detailed information.
   def image_url(options = {})
     secure = options[:ssl] || options[:secure]
     proto = "http#{secure ? 's' : ''}"
@@ -135,9 +164,13 @@ class Gravatar
     "#{proto}://#{sub}.gravatar.com/avatar/#{email_hash}#{extension_for_image(options)}#{query_for_image(options)}"
   end
 
-  # Returns the image data for this user's gravatar image. This is the same as reading the data at #image_url.
+  # Returns the image data for this user's gravatar image. This is the same as reading the data at #image_url. See
+  # that method for more information.
+  #
+  # This method is cached for up to the value of @duration or Gravatar.duration.
   def image_data(options = {})
-    OpenURI.open_uri(URI.parse(image_url(options))).read
+    url = image_url(options)
+    cache(url) { OpenURI.open_uri(URI.parse(url)).read }
   end
 
   private
@@ -187,11 +220,11 @@ class Gravatar
   end
 
   def auth
-    api_key ? {:apikey => api_key} : {:password => password}
+    api_key ? {:apikey => api_key} : (password ? {:password => password} : {})
   end
 
   def api_key
-    options[:apikey] || options[:api_key]
+    options[:apikey] || options[:api_key] || options[:key]
   end
 
   def password
@@ -204,7 +237,7 @@ class Gravatar
 
   def query_for_image(options)
     query = ''
-    [:rating, :size, :default].each do |key|
+    [:rating, :size, :default, :r, :s, :d].each do |key|
       if options.key?(key)
         query.blank? ? query.concat("?") : query.concat("&")
         query.concat("#{key}=#{CGI::escape options[key].to_s}")
