@@ -1,12 +1,31 @@
 require 'spec_helper'
 
 describe Gravatar do
+  def image_data
+    File.read(File.expand_path("../../fixtures/image.jpg", __FILE__))
+  end
+
   it "should require :email" do
     proc { subject }.should raise_error(ArgumentError)
   end
 
   context "given :email and :key" do
-    subject { Gravatar.new("sinisterchipmunk@gmail.com", :apikey => "567c979bdde3")}
+    subject { Gravatar.new($credentials[:primary_email], $credentials)}
+
+    context "varying image ratings" do
+      [:g, :pg, :r, :x].each do |rating|
+        it "should save #{rating}-rated URLs and delete them" do
+          subject.save_url!(rating, "http://jigsaw.w3.org/css-validator/images/vcss").should ==
+                  "2df7db511c46303983f0092556a1e47c"
+          subject.delete_user_image!("2df7db511c46303983f0092556a1e47c").should == true
+        end
+      end
+
+      it "should raise an ArgumentError given an invalid rating" do
+        proc { subject.save_url!(:invalid_rating, "http://jigsaw.w3.org/css-validator/images/vcss") }.should \
+          raise_error(ArgumentError)
+      end
+    end
 
     it "should return addresses" do
       subject.addresses.should_not be_empty
@@ -14,6 +33,29 @@ describe Gravatar do
 
     it "should test successfully" do
       subject.test(:greeting => 'hello').should have_key(:response)
+    end
+
+    it "should save URLs and delete them" do
+      subject.save_url!(:g, "http://jigsaw.w3.org/css-validator/images/vcss").should == "2df7db511c46303983f0092556a1e47c"
+      subject.delete_user_image!("2df7db511c46303983f0092556a1e47c").should == true
+    end
+
+    # Not really the ideal approach but it's a valid test, at least
+    it "should save and delete images and associate/unassociate them with accounts" do
+      begin
+        subject.save_data!(:g, image_data).should == "23f086a793459fa25aab280054fec1b2"
+        subject.use_user_image!("23f086a793459fa25aab280054fec1b2", $credentials[:email]).should ==
+                { $credentials[:email] => false }
+        # See rdoc for #remove_image! for why we're not checking this.
+        subject.remove_image!($credentials[:email])#.should == { $credentials[:email] => true }
+        subject.delete_user_image!("23f086a793459fa25aab280054fec1b2").should == true
+      ensure
+        subject.remove_image!($credentials[:email])
+        begin
+          subject.delete_user_image!("23f086a793459fa25aab280054fec1b2")
+        rescue XMLRPC::FaultException
+        end
+      end
     end
 
     it "should return user images" do

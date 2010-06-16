@@ -1,7 +1,5 @@
-require 'rubygems'
-require "digest/md5"
-require 'sc-core-ext'
-require 'xmlrpc/client'
+require File.expand_path('../gravatar/dependencies', __FILE__)
+require File.expand_path("../gravatar/cache", __FILE__)
 
 # Connecting
 # API Endpoint: https://secure.gravatar.com/xmlrpc?user=[email_hash]
@@ -33,8 +31,9 @@ class Gravatar
   def initialize(email, options = {})
     raise ArgumentError, "Expected :email" unless email
     @options = options || {}
-
     @email = email
+    @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration, "gravatar-#{email_hash}")
+    
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
     end
@@ -46,11 +45,13 @@ class Gravatar
   # Returns: Boolean for a single email address; a hash of emails => booleans for multiple addresses.
   def exists?(*emails)
     hashed_emails = normalize_email_addresses(emails)
-    hash = call('grav.exists', :hashes => hashed_emails)
-    if hash.length == 1
-      boolean(hash.values.first)
-    else
-      dehashify_emails(hash, emails) { |value| boolean(value) }
+    cache('exists', hashed_emails) do
+      hash = call('grav.exists', :hashes => hashed_emails)
+      if hash.length == 1
+        boolean(hash.values.first)
+      else
+        dehashify_emails(hash, emails) { |value| boolean(value) }
+      end
     end
   end
 
@@ -63,26 +64,28 @@ class Gravatar
   #    }
   #  }
   def addresses
-    call('grav.addresses')
+    cache('addresses') { call('grav.addresses') }
   end
 
   # Returns a hash of user images for this account in the following format:
   #   { user_img_hash => [rating, url] }
   def user_images
-    call('grav.userimages')
+    cache('user_images') { call('grav.userimages') }
   end
 
-  # Saves binary image data as a userimage for this account
+  # Saves binary image data as a userimage for this account and returns the ID of the image.
   def save_data!(rating, data)
-    boolean(call('grav.saveData', :data => Base64.encode64(data), :rating => self.rating(rating)))
+    call('grav.saveData', :data => Base64.encode64(data), :rating => _rating(rating))
   end
   alias save_image! save_data!
 
-  # Read an image via its URL and save that as a userimage for this account
+  # Read an image via its URL and save that as a userimage for this account, returning true or false
   def save_url!(rating, url)
-    boolean(call('grav.saveUrl', :url => url, :rating => self.rating(rating)))
+    call('grav.saveUrl', :url => url, :rating => _rating(rating))
   end
 
+  # Use a userimage as a gravatar for one or more addresses on this account. Returns a hash:
+  #   { email_address => true/false }
   def use_user_image!(image_hash, *email_addresses)
     hashed_email_addresses = normalize_email_addresses(email_addresses)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
@@ -90,12 +93,17 @@ class Gravatar
   end
   alias use_image! use_user_image!
 
+  # Remove the userimage associated with one or more email addresses. Returns a hash of booleans.
+  #   NOTE: This appears to always return false, even when it is really removing an image. If you
+  #   know what the deal with that is, drop me a line so I can update this documentation!
   def remove_image!(*emails)
     hashed_email_addresses = normalize_email_addresses(emails)
     hash = call('grav.removeImage', :addresses => hashed_email_addresses)
     dehashify_emails(hash, emails) { |value| boolean(value) }
   end
 
+  # Remove a userimage from the account and any email addresses with which it is associated. Returns
+  # true or false.
   def delete_user_image!(userimage)
     boolean(call('grav.deleteUserimage', :userimage => userimage))
   end
@@ -104,6 +112,7 @@ class Gravatar
     call('grav.test', hash)
   end
 
+  
   def email_hash(email = self.email)
     Digest::MD5.hexdigest(email.downcase.strip)
   end
@@ -115,15 +124,23 @@ class Gravatar
     "#{proto}://#{sub}.gravatar.com/avatar/#{email_hash}#{extension_for_image(options)}#{query_for_image(options)}"
   end
 
+  # Returns the image data for this user's gravatar image. This is the same as reading the data at #image_url.
+  def image_data(options = {})
+    cache('image_data') do
+      raise 'not implemented'
+    end
+  end
+
   private
+  def cache(*key, &block)
+    @cache.call(*key, &block)
+  end
+
   def dehashify_emails(response, emails)
+    hashed_emails = emails.collect { |email| email_hash(email) }
     response.inject({}) do |hash, (hashed_email, value)|
       value = yield(value) if value
-      begin
-        email = emails[response.keys.index(hashed_email)]
-      rescue TypeError
-        raise TypeError, "Could not find key index of #{hashed_email} in #{hash.keys.inspect}"
-      end
+      email = emails[hashed_emails.index(hashed_email)]
       hash[email] = value
       hash
     end
@@ -145,16 +162,19 @@ class Gravatar
       when :pg then 1
       when :r  then 2
       when :x  then 3
-      else raise "Unexpected rating index: #{i} (expected between 0..3)"
+      else raise ArgumentError, "Unexpected rating index: #{i} (expected between 0..3)"
     end
   end
+  alias _rating rating
 
   def boolean(i)
-    i != 0
+    i.kind_of?(Numeric) ? i != 0 : i
   end
 
   def call(name, args_hash = {})
-    @api.call(name, auth.merge(args_hash)).with_indifferent_access
+    r = @api.call(name, auth.merge(args_hash))
+    r = r.with_indifferent_access if r.kind_of?(Hash)
+    r
   end
 
   def auth
