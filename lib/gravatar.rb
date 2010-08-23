@@ -6,12 +6,12 @@ require File.expand_path("../gravatar/cache", __FILE__)
 # Errors usually come with a number and human readable text. Generally the text should be followed whenever possible,
 # but a brief description of the numeric error codes are as follows:
 #
-#     -7	Use secure.gravatar.com
-#     -8	Internal error
-#     -9	Authentication error
-#     -10	Method parameter missing
-#     -11	Method parameter incorrect
-#     -100	Misc error (see text)
+#     -7  Use secure.gravatar.com
+#     -8  Internal error
+#     -9  Authentication error
+#     -10 Method parameter missing
+#     -11 Method parameter incorrect
+#     -100  Misc error (see text)
 #
 class Gravatar
   attr_reader :email
@@ -33,7 +33,7 @@ class Gravatar
     pw_or_key = auth.keys.first || :none
     @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration,
                                  "gravatar-#{email_hash}-#{pw_or_key}", options[:logger] || self.class.logger)
-    
+
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
     end
@@ -123,7 +123,7 @@ class Gravatar
   def use_user_image!(image_hash, *email_addresses)
     hashed_email_addresses = normalize_email_addresses(email_addresses)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
-    returning dehashify_emails(hash, email_addresses) { |value| boolean(value) } do
+    dehashify_emails(hash, email_addresses).tap { |value| boolean(value) } do
       expire_cache!
     end
   end
@@ -139,7 +139,7 @@ class Gravatar
   def remove_image!(*emails)
     hashed_email_addresses = normalize_email_addresses(emails)
     hash = call('grav.removeImage', :addresses => hashed_email_addresses)
-    returning dehashify_emails(hash, emails) { |value| boolean(value) } do
+    dehashify_emails(hash, emails).tap { |value| boolean(value) } do
       expire_cache!
     end
   end
@@ -151,7 +151,7 @@ class Gravatar
   #
   # This method will clear out the cache, since it may have an effect on what the API methods respond with.
   def delete_user_image!(userimage)
-    returning boolean(call('grav.deleteUserimage', :userimage => userimage)) do
+    boolean(call('grav.deleteUserimage', :userimage => userimage)).tap do
       expire_cache!
     end
   end
