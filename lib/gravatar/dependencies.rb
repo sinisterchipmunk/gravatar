@@ -1,4 +1,4 @@
-if defined?(Rails)
+if defined?(Rails) and Rails::VERSION::STRING < '3.0.0'
   Rails.configuration.gem "sc-core-ext", ">= 1.2.0"
 elsif !defined?(Gem)
   require 'rubygems'

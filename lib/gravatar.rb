@@ -123,7 +123,7 @@ class Gravatar
   def use_user_image!(image_hash, *email_addresses)
     hashed_email_addresses = normalize_email_addresses(email_addresses)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
-    dehashify_emails(hash, email_addresses).tap { |value| boolean(value) } do
+    dehashify_emails(hash, email_addresses) { |value| boolean(value) }.tap do
       expire_cache!
     end
   end
@@ -139,7 +139,7 @@ class Gravatar
   def remove_image!(*emails)
     hashed_email_addresses = normalize_email_addresses(emails)
     hash = call('grav.removeImage', :addresses => hashed_email_addresses)
-    dehashify_emails(hash, emails).tap { |value| boolean(value) } do
+    dehashify_emails(hash, emails) { |value| boolean(value) }.tap do
       expire_cache!
     end
   end
