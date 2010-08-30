@@ -14,6 +14,10 @@ describe "Dependencies" do
           end
           @config
         end
+
+        module VERSION
+          STRING = "2.3.5"
+        end
       end
     end
 

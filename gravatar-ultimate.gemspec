@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{gravatar-ultimate}
-  s.version = "1.0.0"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Colin MacKenzie IV"]
-  s.date = %q{2010-06-16}
+  s.date = %q{2010-08-30}
   s.description = %q{The Ultimate Gravatar Gem!
 
 This gem is used to interface with the entire Gravatar API: it's not just for generating image URLs, but for connecting
@@ -42,10 +42,10 @@ rather than just a URL to that data. This saves you the extra step of having to 
      "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
-  s.homepage = %q{http://github.com/sinisterchipmunk/gravatar}
+  s.homepage = %q{http://www.thoughtsincomputation.com/}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{A gem for interfacing with the entire Gravatar API: not just images, but the XML-RPC API too!}
   s.test_files = [
     "spec/spec_helper.rb",
@@ -59,7 +59,7 @@ rather than just a URL to that data. This saves you the extra step of having to 
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<sc-core-ext>, [">= 1.2.0"])
       s.add_development_dependency(%q<rspec>, [">= 1.3.0"])
       s.add_development_dependency(%q<fakeweb>, [">= 1.2.8"])
