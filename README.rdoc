@@ -16,7 +16,9 @@ As with any gem, you have to type a few lines to tell Ruby to actually *use* it.
 
 ==== ...in Ruby on Rails (v3.x)
 
-* This isn't ready yet, but it's in the works.
+* Edit your Gemfile
+* Add this line:
+  gem 'gravitar-ultimate'
 
 ==== ...in Ruby on Rails (v2.x)
 
@@ -98,3 +100,7 @@ them within an Initializer in config/initializers/any_filename.rb in order to en
 == Copyright
 
 Copyright (c) 2010 Colin MacKenzie IV. See LICENSE for details.
+
+== Contributors
+
+Ben Tillman - github.com/crossroads
