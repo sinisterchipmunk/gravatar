@@ -71,8 +71,8 @@ describe Gravatar do
     end
 
     it "should return user images" do
-      subject.user_images.should == {"fe9dee44a1df19967db30a04083722d5"=>
-              [:g, "http://en.gravatar.com/userimage/14612723/fe9dee44a1df19967db30a04083722d5.jpg"]}
+      subject.user_images.should include({"fe9dee44a1df19967db30a04083722d5"=>
+              [:g, "http://en.gravatar.com/userimage/14612723/fe9dee44a1df19967db30a04083722d5.jpg"]})
     end
 
     it "should determine that the user exists" do
