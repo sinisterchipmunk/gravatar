@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Gravatar::Cache</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Gravatar::Cache</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/gravatar/cache_rb.html">
+                lib/gravatar/cache.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+A wrapper around any given <a href="Cache.html">Cache</a> object which
+provides <a href="../Gravatar.html">Gravatar</a>-specific helpers. Used
+internally.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000035">cache_key</a>&nbsp;&nbsp;
+      <a href="#M000029">call</a>&nbsp;&nbsp;
+      <a href="#M000030">clear!</a>&nbsp;&nbsp;
+      <a href="#M000031">expire!</a>&nbsp;&nbsp;
+      <a href="#M000032">expired?</a>&nbsp;&nbsp;
+      <a href="#M000036">log_error</a>&nbsp;&nbsp;
+      <a href="#M000028">new</a>&nbsp;&nbsp;
+      <a href="#M000033">read_cache</a>&nbsp;&nbsp;
+      <a href="#M000034">write_cache</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">duration</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">logger</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">namespace</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">real_cache</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
+
+        <div class="method-heading">
+          <a href="#M000028" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(real_cache, duration, namespace = nil, logger = Gravatar.logger)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000028-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000028-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 7</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">real_cache</span>, <span class="ruby-identifier">duration</span>, <span class="ruby-identifier">namespace</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">logger</span> = <span class="ruby-constant">Gravatar</span>.<span class="ruby-identifier">logger</span>)
+      <span class="ruby-ivar">@duration</span> = <span class="ruby-identifier">duration</span>
+      <span class="ruby-ivar">@real_cache</span> = <span class="ruby-identifier">real_cache</span>
+      <span class="ruby-ivar">@namespace</span> = <span class="ruby-identifier">namespace</span>
+      <span class="ruby-ivar">@logger</span> = <span class="ruby-identifier">logger</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
+
+        <div class="method-heading">
+          <a href="#M000035" class="method-signature">
+          <span class="method-name">cache_key</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Constructs a cache key from the specified *args and @namespace.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000035-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000035-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 67</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cache_key</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Cache</span>.<span class="ruby-identifier">expand_cache_key</span>(<span class="ruby-identifier">args</span>, <span class="ruby-ivar">@namespace</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
+
+        <div class="method-heading">
+          <a href="#M000029" class="method-signature">
+          <span class="method-name">call</span><span class="method-args">(*key) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provide a series of arguments to be used as a cache key, and a block to be
+executed when the cache is expired or needs to be populated.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  cache = Gravatar::Cache.new(Rails.cache, 30.minutes)
+  cache.call(:first_name =&gt; &quot;Colin&quot;, :last_name =&gt; &quot;MacKenzie&quot;) { call_webservice(with_some_args) }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000029-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000029-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 21</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">cached_copy</span> = <span class="ruby-identifier">read_cache</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">expired?</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-identifier">returning</span>(<span class="ruby-keyword kw">yield</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">object</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">write_cache</span>(<span class="ruby-identifier">object</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-identifier">log_error</span>(<span class="ruby-identifier">$!</span>)
+          <span class="ruby-identifier">cached_copy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cached_copy</span>[<span class="ruby-identifier">:object</span>]
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">cached_copy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cached_copy</span>[<span class="ruby-identifier">:object</span>]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
+
+        <div class="method-heading">
+          <a href="#M000030" class="method-signature">
+          <span class="method-name">clear!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Clears out the entire cache for this object&#8216;s namespace. This
+actually removes the objects, instead of simply marking them as expired, so
+it will be as if the object never existed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000030-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000030-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 39</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">clear!</span>
+      <span class="ruby-ivar">@real_cache</span>.<span class="ruby-identifier">delete_matched</span>(<span class="ruby-node">/^#{Regexp::escape @namespace}/</span>)
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
+
+        <div class="method-heading">
+          <a href="#M000031" class="method-signature">
+          <span class="method-name">expire!</span><span class="method-args">(*key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+forces the specified key to become expired
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000031-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000031-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expire!</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">expired?</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+        <span class="ruby-ivar">@real_cache</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">cache_key</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>), { <span class="ruby-identifier">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">minute</span>.<span class="ruby-identifier">ago</span>, <span class="ruby-identifier">:object</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">read_cache</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)[<span class="ruby-identifier">:object</span>] })
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
+
+        <div class="method-heading">
+          <a href="#M000032" class="method-signature">
+          <span class="method-name">expired?</span><span class="method-args">(*key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the cached copy is nil or expired based on @duration.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000032-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000032-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 51</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expired?</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-identifier">cached_copy</span> = <span class="ruby-identifier">read_cache</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-identifier">cached_copy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">cached_copy</span>[<span class="ruby-identifier">:expires_at</span>] <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
+
+        <div class="method-heading">
+          <a href="#M000036" class="method-signature">
+          <span class="method-name">log_error</span><span class="method-args">(error)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Logs an error message, as long as self.logger responds to :error or :write.
+Otherwise, re-raises the error.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000036-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000036-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 73</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">log_error</span>(<span class="ruby-identifier">error</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:error</span>)
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-identifier">error</span>.<span class="ruby-identifier">message</span>
+        <span class="ruby-identifier">error</span>.<span class="ruby-identifier">backtrace</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-node">&quot;  #{line}&quot;</span> }
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:write</span>)
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">write</span>(([<span class="ruby-identifier">error</span>.<span class="ruby-identifier">message</span>]<span class="ruby-operator">+</span><span class="ruby-identifier">error</span>.<span class="ruby-identifier">backtrace</span>).<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n  &quot;</span>))
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">write</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+      <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span> <span class="ruby-identifier">error</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000033" class="method-detail">
+        <a name="M000033"></a>
+
+        <div class="method-heading">
+          <a href="#M000033" class="method-signature">
+          <span class="method-name">read_cache</span><span class="method-args">(*key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reads an object from the cache based on the cache key constructed from
+*key.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000033-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000033-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 57</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read_cache</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-ivar">@real_cache</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">cache_key</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>))
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000034" class="method-detail">
+        <a name="M000034"></a>
+
+        <div class="method-heading">
+          <a href="#M000034" class="method-signature">
+          <span class="method-name">write_cache</span><span class="method-args">(object, *key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes an object to the cache based on th cache key constructed from *key.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000034-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000034-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/gravatar/cache.rb, line 62</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write_cache</span>(<span class="ruby-identifier">object</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">key</span>)
+      <span class="ruby-ivar">@real_cache</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">cache_key</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">key</span>), { <span class="ruby-identifier">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">duration</span>, <span class="ruby-identifier">:object</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">object</span> })
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

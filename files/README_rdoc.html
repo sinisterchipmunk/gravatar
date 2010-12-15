@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README.rdoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README.rdoc</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README.rdoc
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Dec 15 08:47:48 -0500 2010</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>gravatar-ultimate</h1>
+<p>
+The Ultimate <a href="../classes/Gravatar.html">Gravatar</a> Gem!
+</p>
+<p>
+This gem is used to interface with the entire <a
+href="../classes/Gravatar.html">Gravatar</a> API: it&#8216;s not just for
+generating image URLs, but for connecting to and communicating with the
+XML-RPC API too! Additionally, it can be used to download the <a
+href="../classes/Gravatar.html">Gravatar</a> image data itself, rather than
+just a URL to that data. This saves you the extra step of having to do so.
+</p>
+<h2>Installation</h2>
+<p>
+gem install gravitar-ultimate
+</p>
+<h2>Activate the gem&#8230;</h2>
+<p>
+As with any gem, you have to type a few lines to tell Ruby to actually
+<b>use</b> it. Here&#8216;s how to do that&#8230;
+</p>
+<h4>&#8230;in Ruby on Rails (v3.x)</h4>
+<ul>
+<li>Edit your Gemfile
+
+</li>
+<li>Add this line: gem &#8216;gravitar-ultimate&#8216;
+
+</li>
+</ul>
+<h4>&#8230;in Ruby on Rails (v2.x)</h4>
+<ul>
+<li>Edit your config/environment.rb file
+
+</li>
+<li>Add this line beneath &quot;Rails::Initializer.run do |config|&quot;:
+
+<pre>
+ config.gem 'gravitar-ultimate'
+</pre>
+</li>
+</ul>
+<h4>&#8230;in vanilla Ruby</h4>
+<pre>
+  require 'rubygems'
+  gem 'gravitar-ultimate'
+  require 'gravitar-ultimate'
+</pre>
+<h2>Usage</h2>
+<p>
+Using the gem is actually pretty simple. Let&#8216;s say you want the <a
+href="../classes/Gravatar.html">Gravatar</a> image URL for
+&quot;generic@example.com&quot;:
+</p>
+<pre>
+  url = Gravatar.new(&quot;generic@example.com&quot;).image_url
+</pre>
+<p>
+Cool, huh? Let&#8216;s take it a step further and grab the actual image
+<b>data</b> so that we can render it on the screen:
+</p>
+<pre>
+  data = Gravatar.new(&quot;generic@example.com&quot;).image_data
+</pre>
+<p>
+Fine, but how about the rest of the API as advertised at <a
+href="http://en.gravatar.com/site/implement/xmlrpc?">en.gravatar.com/site/implement/xmlrpc?</a>
+Well, for that you need either the user&#8216;s <a
+href="../classes/Gravatar.html">Gravatar</a> password, or their API key:
+</p>
+<pre>
+  api = Gravatar.new(&quot;generic@example.com&quot;, :password =&gt; &quot;helloworld&quot;)
+  api = Gravatar.new(&quot;generic@example.com&quot;, :api_key =&gt; &quot;AbCdEfG1234&quot;)
+</pre>
+<p>
+After you have that, things get a lot easier:
+</p>
+<pre>
+  api.exists?                                   #=&gt; true or false, depending on whether this user has an account.
+  api.addresses                                 #=&gt; a list of email addresses and their corresponding images
+  api.save_data!(rating, image_data)            #=&gt; saves an image to this user's account and returns a handle to it
+  api.use_user_image!(handle, an_email_address) #=&gt; uses the specified image handle for the specified email address(es)
+  api.exists?(&quot;another@example.com&quot;)            #=&gt; true or false, depending on whether the specified email exists.
+</pre>
+<h2>Caching</h2>
+<p>
+As you can see this is quite powerful. But it gets better. <a
+href="../classes/Gravatar.html">Gravatar</a> Ultimate even manages caching
+of API responses for you! That way, if an error occurs, (such as the <a
+href="../classes/Gravatar.html">Gravatar</a> site being offline), your code
+won&#8216;t break. It&#8216;ll instead gracefully fall back to the cached
+copy! By default, if you are using Rails, it&#8216;ll use the Rails cache.
+Otherwise, it&#8216;ll use whatever cache you&#8216;re using with <a
+href="../classes/Gravatar.html">Gravatar</a> (by default an instance of
+ActiveSupport::Cache::FileStore).
+</p>
+<p>
+This has obvious benefits when used for the API calls that do not result in
+changing the user&#8216;s profile, but what you might not have thought of
+yet is that it also caches image_data, so you can hook your application up
+to that method without fear of what might happen to all those <a
+href="../classes/Gravatar.html">Gravatar</a> images if the <a
+href="../classes/Gravatar.html">Gravatar</a> server should be unavailable!
+</p>
+<p>
+To customize exactly which cache is used, see the next section&#8230;
+</p>
+<h3>Configuration</h3>
+<p>
+To see settings and options you can give for a particular <a
+href="../classes/Gravatar.html">Gravatar</a> instance, check out the <a
+href="../classes/Gravatar.html">Gravatar</a> class documentation. There are
+a few things you can set for <a
+href="../classes/Gravatar.html">Gravatar</a> on a system-wide basis, and
+that&#8216;s what we&#8216;ll go over next.
+</p>
+<p>
+For a non-Rails project, simply set these options before you start using <a
+href="../classes/Gravatar.html">Gravatar</a>. For a Rails project, you
+should set them within an Initializer in
+config/initializers/any_filename.rb in order to ensure that the settings
+are applied (A) after <a href="../classes/Gravatar.html">Gravatar</a> has
+been included into the project, and (B) before it is actually used by
+Rails.
+</p>
+<pre>
+  # You can set the default cache for Gravatar to use:
+  Gravatar.cache = ActiveSupport::Cache::SynchronizedMemoryStore.new
+
+  # You can also set the length of time an item in the Gravatar cache is valid. Default is 24.hours
+  Gravatar.duration = 20.minutes
+
+  # You can also change the logger used by default. It's worth mentioning that, once again, Gravatar will use
+  # the Rails logger if it's available. Otherwise, the default is $stdout.
+  grav_log = &quot;&quot;
+  Gravatar.logger = StringIO.new(grav_log) # logs Gravatar output to a String
+</pre>
+<h2>Note on Patches/Pull Requests</h2>
+<ul>
+<li>Fork the project.
+
+</li>
+<li>Make your feature addition or bug fix.
+
+</li>
+<li>Add tests for it. This is important so I don&#8216;t break it in a future
+version unintentionally.
+
+</li>
+<li>Commit, do not mess with rakefile, version, or history. (if you want to
+have your own version, that is fine but bump version in a commit by itself
+I can ignore when I pull)
+
+</li>
+<li>Send me a pull request. Bonus points for topic branches.
+
+</li>
+</ul>
+<h2>Copyright</h2>
+<p>
+Copyright (c) 2010 Colin MacKenzie IV. See LICENSE for details.
+</p>
+<h2>Contributors</h2>
+<p>
+Ben Tillman - github.com/crossroads
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
