@@ -8,7 +8,7 @@ rather than just a URL to that data. This saves you the extra step of having to 
 
 == Installation
 
-gem install gravitar-ultimate
+gem install gravatar-ultimate
 
 == Activate the gem...
 
@@ -18,19 +18,19 @@ As with any gem, you have to type a few lines to tell Ruby to actually *use* it.
 
 * Edit your Gemfile
 * Add this line:
-  gem 'gravitar-ultimate'
+  gem 'gravatar-ultimate'
 
 ==== ...in Ruby on Rails (v2.x)
 
 * Edit your config/environment.rb file
 * Add this line beneath "Rails::Initializer.run do |config|":
-   config.gem 'gravitar-ultimate'
+   config.gem 'gravatar-ultimate'
 
 ==== ...in vanilla Ruby
 
   require 'rubygems'
-  gem 'gravitar-ultimate'
-  require 'gravitar-ultimate'
+  gem 'gravatar-ultimate'
+  require 'gravatar-ultimate'
 
 == Usage
 Using the gem is actually pretty simple. Let's say you want the Gravatar image URL for "generic@example.com":
