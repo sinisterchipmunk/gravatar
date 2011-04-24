@@ -123,7 +123,7 @@ class Gravatar
   def use_user_image!(image_hash, emails)
     emails = [emails] unless emails.is_a?(Array)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => emails)
-    dehashify_emails(hash, email_addresses) { |value| boolean(value) }.tap do
+    dehashify_emails(hash, emails) { |value| boolean(value) }.tap do
       expire_cache!
     end
   end
