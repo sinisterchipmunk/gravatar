@@ -123,9 +123,8 @@ class Gravatar
   def use_user_image!(image_hash, emails)
     emails = [emails] unless emails.is_a?(Array)
     hash = call('grav.useUserimage', :userimage => image_hash, :addresses => emails)
-    dehashify_emails(hash, emails) { |value| boolean(value) }.tap do
-      expire_cache!
-    end
+    expire_cache!
+    return hash
   end
   alias use_image! use_user_image!
 
@@ -139,9 +138,8 @@ class Gravatar
   def remove_image!(emails)
     emails = [emails] unless emails.is_a?(Array)
     hash = call('grav.removeImage', :addresses => emails)
-    dehashify_emails(hash, emails) { |value| boolean(value) }.tap do
-      expire_cache!
-    end
+    expire_cache!
+    return hash
   end
 
   # Remove a userimage from the account and any email addresses with which it is associated. Returns
