@@ -120,12 +120,11 @@ class Gravatar
   # This method is not cached.
   #
   # This method will clear out the cache, since it may have an effect on what the API methods respond with.
-  def use_user_image!(image_hash, *email_addresses)
-    hashed_email_addresses = normalize_email_addresses(email_addresses)
-    hash = call('grav.useUserimage', :userimage => image_hash, :addresses => hashed_email_addresses)
-    dehashify_emails(hash, email_addresses) { |value| boolean(value) }.tap do
-      expire_cache!
-    end
+  def use_user_image!(image_hash, emails)
+    emails = [emails] unless emails.is_a?(Array)
+    hash = call('grav.useUserimage', :userimage => image_hash, :addresses => emails)
+    expire_cache!
+    return hash
   end
   alias use_image! use_user_image!
 
@@ -136,12 +135,11 @@ class Gravatar
   # This method is not cached.
   #
   # This method will clear out the cache, since it may have an effect on what the API methods respond with.
-  def remove_image!(*emails)
-    hashed_email_addresses = normalize_email_addresses(emails)
-    hash = call('grav.removeImage', :addresses => hashed_email_addresses)
-    dehashify_emails(hash, emails) { |value| boolean(value) }.tap do
-      expire_cache!
-    end
+  def remove_image!(emails)
+    emails = [emails] unless emails.is_a?(Array)
+    hash = call('grav.removeImage', :addresses => emails)
+    expire_cache!
+    return hash
   end
 
   # Remove a userimage from the account and any email addresses with which it is associated. Returns
@@ -280,3 +278,4 @@ class Gravatar
     options.key?(:filetype) ? "." + (options[:filetype] || "jpg").to_s : ""
   end
 end
+
