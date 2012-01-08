@@ -22,7 +22,7 @@ class Gravatar
       cached_copy = read_cache(*key)
       if expired?(*key) && block_given?
         begin
-          returning(yield) do |object|
+          yield.tap do |object|
             write_cache(object, *key)
           end
         rescue

@@ -1,5 +1,7 @@
 require File.expand_path('../gravatar/dependencies', __FILE__)
 require File.expand_path("../gravatar/cache", __FILE__)
+require File.expand_path("../ext/xmlrpc", __FILE__)
+require 'pp'
 
 # ==== Errors ====
 #
@@ -36,6 +38,7 @@ class Gravatar
 
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
+      @api.set_debug if ENV['DEBUG']
     end
   end
 
@@ -85,7 +88,7 @@ class Gravatar
       end
     end
   end
-
+  
   # Returns a hash of user images for this account in the following format:
   #   { user_img_hash => [rating, url] }
   #
@@ -242,6 +245,10 @@ class Gravatar
   end
 
   def call(name, args_hash = {})
+    if ENV['DEBUG']
+      puts "Calling >> #{name.inspect}"
+      pp auth.merge(args_hash)
+    end
     r = @api.call(name, auth.merge(args_hash))
     r = r.with_indifferent_access if r.kind_of?(Hash)
     r
