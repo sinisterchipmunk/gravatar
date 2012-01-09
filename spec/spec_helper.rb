@@ -8,8 +8,8 @@ def image_data
 end
 
 require 'fakeweb'
-FakeWeb.allow_net_connect = false
-FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/5d8c7a8d951a28e10bd7407f33df6d63", :response =>
+# FakeWeb.allow_net_connect = false
+FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98", :response =>
         "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +image_data)
 
 def new_cache
