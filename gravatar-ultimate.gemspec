@@ -33,4 +33,5 @@ rather than just a URL to that data. This saves you the extra step of having to 
   s.add_development_dependency('activesupport', '~> 2.3.14')
   s.add_development_dependency('i18n', '~> 0.6.0')
   s.add_development_dependency('rake', '~> 0.9.2.2')
+  s.add_development_dependency('rdoc', '~> 3.11')
 end
