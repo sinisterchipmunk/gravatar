@@ -1,3 +1,5 @@
+require 'active_support'
+require 'active_support/core_ext'
 require File.expand_path('../gravatar/dependencies', __FILE__)
 require File.expand_path("../gravatar/cache", __FILE__)
 

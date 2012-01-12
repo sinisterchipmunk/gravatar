@@ -3,8 +3,6 @@ Bundler.setup
 
 require File.expand_path("../../lib/gravatar", __FILE__)
 require 'rspec'
-require 'active_support'
-require 'active_support/core_ext'
 
 def image_data
   data = File.read(File.expand_path("../fixtures/image.jpg", __FILE__))

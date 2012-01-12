@@ -1,6 +1,16 @@
 require 'spec_helper'
 
 describe Gravatar do
+  def clear_account(g)
+    # make sure the gravatar has no data, so tests don't taint each other
+    g.user_images.each do |usrimg_hash, (rating, url)|
+      g.delete_user_image!(usrimg_hash)
+    end
+    
+    # sanity check
+    g.user_images.should be_empty
+  end
+  
   it "should allow setting cache duration by instance" do
     grav = Gravatar.new($credentials[:primary_email])
     grav.cache_duration = 10.minutes
@@ -19,13 +29,7 @@ describe Gravatar do
 
   context "given :email and :key" do
     subject { Gravatar.new($credentials[:primary_email], $credentials)}
-    
-    before(:each) do
-      # make sure the gravatar has no data, so tests don't taint each other
-      subject.user_images.each do |usrimg_hash, (rating, url)|
-        subject.delete_user_image!(usrimg_hash)
-      end
-    end
+    before { clear_account subject }
 
     context "varying image ratings" do
       [:g, :pg, :r, :x].each do |rating|
@@ -104,6 +108,7 @@ describe Gravatar do
     context "with a user image attached" do
       before do
         g = Gravatar.new($credentials[:email], $credentials)
+        clear_account g
         @image_hash = g.save_data!(:g, image_data)
         g.use_user_image!(@image_hash, $credentials[:email])
       end

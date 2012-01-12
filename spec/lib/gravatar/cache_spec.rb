@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Gravatar::Cache do
   subject { Gravatar::Cache.new(new_cache, 30.minutes, "gravatar-specs") }
-
+  
   context "with a nonexistent cache item" do
     it "should be expired" do
       subject.expired?(:nothing).should be_true
@@ -27,6 +27,13 @@ describe Gravatar::Cache do
 
     it "should not be expired" do
       subject.expired?(:nothing).should be_false
+    end
+    
+    context "after clearing the cache" do
+      before { subject.clear! }
+      it "should be nil" do
+        subject.call(:nothing) { 2 }.should == 2
+      end
     end
 
     it "should not fire the block" do
