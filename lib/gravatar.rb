@@ -1,7 +1,5 @@
 require File.expand_path('../gravatar/dependencies', __FILE__)
 require File.expand_path("../gravatar/cache", __FILE__)
-require File.expand_path("../ext/xmlrpc", __FILE__)
-require 'pp'
 
 # ==== Errors ====
 #
@@ -37,18 +35,17 @@ class Gravatar
 
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
-      @api.set_debug if ENV['DEBUG']
     end
   end
 
   # The duration of the cache for this instance of Gravatar, independent of any other instance
   def cache_duration
-    @cache.duration
+    cache.duration
   end
 
   # Sets the duration of the cache for this instance of Gravatar, independent of any other instance
   def cache_duration=(time)
-    @cache.duration = time
+    cache.duration = time
   end
 
   # Check whether one or more email addresses have corresponding avatars. If no email addresses are
@@ -82,6 +79,7 @@ class Gravatar
   def addresses
     cache('addresses') do
       call('grav.addresses').inject({}) do |hash, (address, info)|
+        p hash, address, info
         hash[address] = info.merge(:rating => rating(info[:rating]))
         hash
       end
@@ -175,7 +173,7 @@ class Gravatar
   #   :default or :d         a default URL for this image to display if the specified user has no image;
   #                          or this can be one of [ :identicon, :monsterid, :wavatar, 404 ]. By default a generic
   #                          Gravatar image URL will be returned.
-  #   :filetype              an extension such as :jpg or :png. Default is omitted.
+  #   :filetype or :ext      an extension such as :jpg or :png. Default is omitted.
   #
   # See http://en.gravatar.com/site/implement/url for much more detailed information.
   def image_url(options = {})
@@ -199,13 +197,18 @@ class Gravatar
     @version ||= File.read(File.join(File.dirname(__FILE__), "../VERSION")).chomp
   end
 
-  private
+  # If no arguments are given, the cache object for this instance is returned. Otherwise, the arguments
+  # are passed into Gravatar::Cache#cache.
   def cache(*key, &block)
-    @cache.call(*key, &block)
+    if key.empty? and not block_given?
+      @cache
+    else
+      @cache.call(*key, &block)
+    end
   end
 
   def expire_cache!
-    @cache.clear!
+    cache.clear!
   end
 
   def dehashify_emails(response, emails)
@@ -226,10 +229,12 @@ class Gravatar
 
   def rating(i)
     case i
+      when -1, '-1' then :unknown
       when 0, '0' then :g
       when 1, '1' then :pg
       when 2, '2' then :r
       when 3, '3' then :x
+      when :unknown then -1
       when :g  then 0
       when :pg then 1
       when :r  then 2
@@ -244,10 +249,6 @@ class Gravatar
   end
 
   def call(name, args_hash = {})
-    if ENV['DEBUG']
-      puts "Calling >> #{name.inspect}"
-      pp auth.merge(args_hash)
-    end
     r = @api.call(name, auth.merge(args_hash))
     r = r.with_indifferent_access if r.kind_of?(Hash)
     r
@@ -281,7 +282,7 @@ class Gravatar
   end
 
   def extension_for_image(options)
-    options.key?(:filetype) ? "." + (options[:filetype] || "jpg").to_s : ""
+    options.key?(:filetype) || options.key?(:ext) ? "." + (options[:filetype] || options[:ext] || "jpg").to_s : ""
   end
 end
 
