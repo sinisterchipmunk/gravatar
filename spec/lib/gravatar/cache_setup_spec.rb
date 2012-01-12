@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "gravatar cache setup" do
   context "within Rails" do
     before(:each) do
