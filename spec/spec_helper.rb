@@ -1,3 +1,6 @@
+require 'bundler'
+Bundler.setup
+
 require File.expand_path("../../lib/gravatar", __FILE__)
 require 'rspec'
 require 'active_support'
