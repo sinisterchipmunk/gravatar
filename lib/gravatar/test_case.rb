@@ -93,7 +93,7 @@ module Gravatar::TestCase
     else
       options = args.extract_options!
       options.reverse_merge! :rescue_errors => false
-      @grav = Gravatar.new(*args, options)
+      @grav = Gravatar.new(*args + [options])
     end
   end
   
