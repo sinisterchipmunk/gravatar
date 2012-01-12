@@ -22,7 +22,6 @@ class Gravatar
   #   :password                   => the password for this account, to be used instead of :api_key (don't supply both)
   #   :api_key or :apikey or :key => the API key for this account, to be used instead of :password (don't supply both)
   #   :duration                   => the cache duration to use for this instance
-  #   :logger                     => the logger to use for this instance
   #
   # Note that :password and :api_key are both optional. If omitted, no web services will be available but this
   # user's Gravatar image can still be constructed using #image_uri or #image_data.
@@ -34,7 +33,7 @@ class Gravatar
 
     pw_or_key = auth.keys.first || :none
     @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration,
-                                 "gravatar-#{email_hash}-#{pw_or_key}", options[:logger] || self.class.logger)
+                                 "gravatar-#{email_hash}-#{pw_or_key}")
 
     if !auth.empty?
       @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
