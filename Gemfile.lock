@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gravatar-ultimate (1.0.2)
+    gravatar-ultimate (1.0.3)
 
 GEM
   remote: http://rubygems.org/
