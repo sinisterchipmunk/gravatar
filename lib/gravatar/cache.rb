@@ -2,12 +2,19 @@ class Gravatar
   # A wrapper around any given Cache object which provides Gravatar-specific helpers. Used internally.
   class Cache
     attr_reader :real_cache, :namespace
-    attr_accessor :duration
+    attr_accessor :duration, :logger
+    
+    # If true, any errors encountered while communicating with the server will be rescued
+    # and the error message will be written to #logger, then the cached copy of the result
+    # (if any) will be returned. If false, the error will be raised.
+    attr_accessor :rescue_errors
 
-    def initialize(real_cache, duration, namespace = nil)
+    def initialize(real_cache, duration, namespace = nil, logger = Gravatar.logger)
       @duration = duration
       @real_cache = real_cache
       @namespace = namespace
+      @logger = logger
+      @rescue_errors = true
     end
 
     # Provide a series of arguments to be used as a cache key, and a block to be executed when the cache
@@ -19,12 +26,19 @@ class Gravatar
     #
     def call(*key, &block)
       cached_copy = read_cache(*key)
+      cached_copy &&= cached_copy[:object]
+      
       if expired?(*key) && block_given?
-        yield.tap do |object|
-          write_cache(object, *key)
+        begin
+          yield.tap do |object|
+            write_cache(object, *key)
+          end
+        rescue
+          log_error $!
+          cached_copy
         end
       else
-        cached_copy.nil? ? nil : cached_copy[:object]
+        cached_copy
       end
     end
 
@@ -66,15 +80,29 @@ class Gravatar
     def cache_key(*args)
       ActiveSupport::Cache.expand_cache_key(args, @namespace)
     end
+    
+    # Logs an error message, as long as self.logger responds to :error or :write.
+    # Otherwise, re-raises the error.
+    def log_error(error)
+      raise error unless rescue_errors
+      if logger.respond_to?(:error)
+        logger.error error.message
+        error.backtrace.each { |line| logger.error "  #{line}" }
+      elsif logger.respond_to?(:write)
+        logger.write(([error.message] + error.backtrace).join("\n  ") + "\n")
+      else
+        raise error
+      end
+    end
   end
 
   class << self
     def default_cache_instance
-      if defined?(Rails)
-        Rails.cache
-      else
-        ActiveSupport::Cache::FileStore.new("tmp/cache")
-      end
+      defined?(Rails) ? Rails.cache : ActiveSupport::Cache::FileStore.new("tmp/cache")
+    end
+    
+    def default_logger_instance
+      defined?(Rails) ? Rails.logger : $stderr
     end
 
     def cache
@@ -83,6 +111,14 @@ class Gravatar
 
     def cache=(instance)
       @cache = instance
+    end
+    
+    def logger
+      @logger ||= default_logger_instance
+    end
+    
+    def logger=(logger)
+      @logger = logger
     end
 
     # How long is a cached object good for? Default is 30 minutes.
