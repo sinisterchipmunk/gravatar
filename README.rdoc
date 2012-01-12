@@ -2,9 +2,7 @@
 
 The Ultimate Gravatar Gem!
 
-This gem is used to interface with the entire Gravatar API: it's not just for generating image URLs, but for connecting
-to and communicating with the XML-RPC API too! Additionally, it can be used to download the Gravatar image data itself,
-rather than just a URL to that data. This saves you the extra step of having to do so.
+This gem is used to interface with the entire Gravatar API: it's not just for generating image URLs, but for connecting to and communicating with the XML-RPC API too! Additionally, it can be used to download the Gravatar image data itself, rather than just a URL to that data. This saves you the extra step of having to do so.
 
 == Installation
 
@@ -56,10 +54,7 @@ After you have that, things get a lot easier:
 
 == Caching
 
-As you can see this is quite powerful. But it gets better. Gravatar Ultimate even manages caching of API responses for
-you! That way, if an error occurs, (such as the Gravatar site being offline), your code won't break. It'll instead
-gracefully fall back to the cached copy! By default, if you are using Rails, it'll use the Rails cache. Otherwise, it'll
-use whatever cache you're using with Gravatar (by default an instance of ActiveSupport::Cache::FileStore).
+As you can see this is quite powerful. But it gets better. Gravatar Ultimate even manages caching of API responses for you! That way, if an error occurs, (such as the Gravatar site being offline), your code won't break. It'll instead gracefully fall back to the cached copy! By default, if you are using Rails, it'll use the Rails cache. Otherwise, it'll use whatever cache you're using with Gravatar (by default an instance of ActiveSupport::Cache::FileStore).
 
 This has obvious benefits when used for the API calls that do not result in changing the user's profile, but what you
 might not have thought of yet is that it also caches #image_data, so you can hook your application up to that method
@@ -69,12 +64,9 @@ To customize exactly which cache is used, see the next section...
 
 === Configuration
 
-To see settings and options you can give for a particular Gravatar instance, check out the Gravatar class documentation.
-There are a few things you can set for Gravatar on a system-wide basis, and that's what we'll go over next.
+To see settings and options you can give for a particular Gravatar instance, check out the Gravatar class documentation. There are a few things you can set for Gravatar on a system-wide basis, and that's what we'll go over next.
 
-For a non-Rails project, simply set these options before you start using Gravatar. For a Rails project, you should set
-them within an Initializer in config/initializers/any_filename.rb in order to ensure that the settings are applied
-(A) after Gravatar has been included into the project, and (B) before it is actually used by Rails.
+For a non-Rails project, simply set these options before you start using Gravatar. For a Rails project, you should set them within an Initializer in config/initializers/any_filename.rb in order to ensure that the settings are applied (A) after Gravatar has been included into the project, and (B) before it is actually used by Rails.
 
   # You can set the default cache for Gravatar to use:
   Gravatar.cache = ActiveSupport::Cache::SynchronizedMemoryStore.new
@@ -82,19 +74,12 @@ them within an Initializer in config/initializers/any_filename.rb in order to en
   # You can also set the length of time an item in the Gravatar cache is valid. Default is 24.hours
   Gravatar.duration = 20.minutes
 
-  # You can also change the logger used by default. It's worth mentioning that, once again, Gravatar will use
-  # the Rails logger if it's available. Otherwise, the default is $stdout.
-  grav_log = ""
-  Gravatar.logger = StringIO.new(grav_log) # logs Gravatar output to a String
-
 == Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Add tests for it. This is important so I don't break it in a future version unintentionally.
+* Don't update the version number. (If you want to have your own version, that's fine but bump version in a commit by itself I can ignore when I pull.)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
