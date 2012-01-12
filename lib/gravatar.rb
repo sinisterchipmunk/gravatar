@@ -173,6 +173,8 @@ class Gravatar
   #                          or this can be one of [ :identicon, :monsterid, :wavatar, 404 ]. By default a generic
   #                          Gravatar image URL will be returned.
   #   :filetype or :ext      an extension such as :jpg or :png. Default is omitted.
+  #   :forcedefault or :f    force a default image and ignore the user's specified image. Can be one of
+  #                          [ :identicon, :monsterid, :wavatar, 404 ].
   #
   # See http://en.gravatar.com/site/implement/url for much more detailed information.
   def image_url(options = {})
@@ -271,7 +273,7 @@ class Gravatar
 
   def query_for_image(options)
     query = ''
-    [:rating, :size, :default, :r, :s, :d].each do |key|
+    [:rating, :size, :default, :forcedefault, :r, :s, :d, :f].each do |key|
       if options.key?(key)
         query.blank? ? query.concat("?") : query.concat("&")
         query.concat("#{key}=#{CGI::escape options[key].to_s}")

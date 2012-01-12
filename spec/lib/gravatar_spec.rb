@@ -142,6 +142,13 @@ describe Gravatar do
               "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?default=http%3A%2F%2Fexample.com%2Fimages%2Fexample.jpg"
     end
     
+    it "should return gravatar image_url with forcedefault" do
+      subject.image_url(:f => :identicon).should ==
+              "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?f=identicon"
+      subject.image_url(:forcedefault => :identicon).should ==
+              "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?forcedefault=identicon"
+    end
+
     it "should return gravatar image_url with SSL and default and size and rating" do
       combinations = %w(
         https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?default=identicon&size=80&rating=g
