@@ -1,6 +1,7 @@
 require File.expand_path("../../lib/gravatar", __FILE__)
 require 'rspec'
 require 'active_support'
+require 'active_support/core_ext'
 
 def image_data
   data = File.read(File.expand_path("../fixtures/image.jpg", __FILE__))
@@ -27,4 +28,5 @@ class Net::HTTP
   end
 end
 
+require 'yaml'
 $credentials = YAML::load(File.read(File.expand_path("../credentials.yml", __FILE__))).with_indifferent_access
