@@ -25,3 +25,13 @@ pkg
 spec/fixtures/requests
 spec/credentials.yml
 
+
+rails*/.bundle
+
+# Ignore the default SQLite database.
+rails*/db/*.sqlite3
+
+# Ignore all logfiles and tempfiles.
+rails*/log/*.log
+rails*/tmp
+

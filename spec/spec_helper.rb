@@ -1,6 +1,7 @@
 require 'bundler'
 Bundler.setup
 
+require File.expand_path('../environments/rails', File.dirname(__FILE__))
 require File.expand_path("../../lib/gravatar", __FILE__)
 require 'rspec'
 

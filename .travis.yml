@@ -8,7 +8,9 @@ rvm:
   - ruby-head
 
 gemfile:
-  Gemfile
+  - Gemfile
+  - gemfiles/rails-2.3.14
+  - gemfiles/rails-3.1.3
 
 env:
   - DEBUG=1
