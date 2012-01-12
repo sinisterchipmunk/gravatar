@@ -2,3 +2,4 @@ source "http://rubygems.org"
 gemspec :path => '..'
 
 gem 'rails', '= 2.3.14'
+gem 'jruby-openssl', :platforms => :jruby
