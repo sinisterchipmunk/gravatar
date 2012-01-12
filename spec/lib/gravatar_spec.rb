@@ -23,6 +23,13 @@ describe Gravatar do
 
   context "given :email and :key" do
     subject { Gravatar.new($credentials[:primary_email], $credentials)}
+    
+    before(:each) do
+      # make sure the gravatar has no data, so tests don't taint each other
+      subject.user_images.each do |usrimg_hash, (rating, url)|
+        subject.delete_user_image!(usrimg_hash)
+      end
+    end
 
     context "varying image ratings" do
       [:g, :pg, :r, :x].each do |rating|
@@ -54,6 +61,7 @@ describe Gravatar do
 
     # Not really the ideal approach but it's a valid test, at least
     it "should save and delete images and associate/unassociate them with accounts" do
+      pending
       begin
         subject.save_data!(:g, image_data).should == "23f086a793459fa25aab280054fec1b2"
         subject.use_user_image!("23f086a793459fa25aab280054fec1b2", $credentials[:email]).should ==
@@ -63,16 +71,16 @@ describe Gravatar do
         subject.delete_user_image!("23f086a793459fa25aab280054fec1b2").should == true
       ensure
         subject.remove_image!($credentials[:email])
-        begin
-          subject.delete_user_image!("23f086a793459fa25aab280054fec1b2")
-        rescue XMLRPC::FaultException
-        end
+        subject.delete_user_image!("23f086a793459fa25aab280054fec1b2")
       end
     end
 
     it "should return user images" do
-      subject.user_images.should include({"fe9dee44a1df19967db30a04083722d5"=>
-              [:g, "http://en.gravatar.com/userimage/14612723/fe9dee44a1df19967db30a04083722d5.jpg"]})
+      image_hash = subject.save_data!(:g, image_data)
+      subject.use_user_image!(image_hash, $credentials[:email])
+
+      subject.user_images.should include({"23f086a793459fa25aab280054fec1b2"=>
+              [:g, "http://en.gravatar.com/userimage/30721149/23f086a793459fa25aab280054fec1b2.jpg"]})
     end
 
     it "should determine that the user exists" do
@@ -104,7 +112,7 @@ describe Gravatar do
     end
 
     it "should return gravitar image data" do
-      subject.image_data.should == image_data
+      Digest::MD5.hexdigest(subject.image_data).should == Digest::MD5.hexdigest(image_data)
     end
 
     it "should return gravatar image_url with SSL" do
@@ -126,6 +134,11 @@ describe Gravatar do
     it "should return gravatar image_url with default image" do
       subject.image_url(:default => "http://example.com/images/example.jpg").should ==
               "http://www.gravatar.com/avatar/5d8c7a8d951a28e10bd7407f33df6d63?default=http%3A%2F%2Fexample.com%2Fimages%2Fexample.jpg"
+    end
+    
+    it "should return gravatar image_url with forcedefault" do
+      subject.image_url(:forcedefault => :identicon).should ==
+              "http://www.gravatar.com/avatar/5d8c7a8d951a28e10bd7407f33df6d63?forcedefault=identicon"
     end
 
     it "should return gravatar image_url with SSL and default and size and rating" do
