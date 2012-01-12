@@ -194,10 +194,6 @@ class Gravatar
     cache(url) { OpenURI.open_uri(URI.parse(url)).read }
   end
 
-  def self.version
-    @version ||= File.read(File.join(File.dirname(__FILE__), "../VERSION")).chomp
-  end
-
   # If no arguments are given, the cache object for this instance is returned. Otherwise, the arguments
   # are passed into Gravatar::Cache#cache.
   def cache(*key, &block)
