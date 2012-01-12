@@ -51,34 +51,12 @@ describe Gravatar::Cache do
       end
 
       context "in the event of an error while refreshing" do
-        before(:each) { subject.logger = StringIO.new("") }
-        
-        it "should recover" do
-          proc { subject.call(:nothing) { raise "something bad happened" } }.should_not raise_error(RuntimeError)
+        it "should raise the error" do
+          proc { subject.call(:nothing) { raise "something bad happened" } }.should raise_error(RuntimeError)
         end
 
-        it "should return the cached copy" do
-          subject.call(:nothing) { raise "something bad happened" }.should == 1
-        end
-
-        context "its logger" do
-          before(:each) { subject.logger = Object.new }
-
-          it "should log it if #error is available" do
-            subject.logger.stub!(:error => nil)
-            subject.logger.should_receive(:error).and_return(nil)
-            subject.call(:nothing) { raise "something bad happened" }
-          end
-
-          it "should log it if #write is available" do
-            subject.logger.stub!(:write => nil)
-            subject.logger.should_receive(:write).and_return(nil)
-            subject.call(:nothing) { raise "something bad happened" }
-          end
-
-          it "should re-raise the error if no other methods are available" do
-            proc { subject.call(:nothing) { raise "something bad happened" } }.should raise_error(RuntimeError)
-          end
+        it "should provide access to the cached copy" do
+          subject.cached(:nothing).should == 1
         end
       end
 

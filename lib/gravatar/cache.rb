@@ -51,6 +51,11 @@ class Gravatar
     def read_cache(*key)
       @real_cache.read(cache_key(*key))
     end
+    
+    def cached(*key)
+      copy = read_cache(*key)
+      copy &&= copy[:object]
+    end
 
     # Writes an object to the cache based on th cache key constructed from *key.
     def write_cache(object, *key)
