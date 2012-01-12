@@ -22,3 +22,6 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+spec/fixtures/requests
+spec/credentials.yml
+

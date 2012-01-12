@@ -16,7 +16,15 @@ require File.expand_path("../gravatar/cache", __FILE__)
 #     -100  Misc error (see text)
 #
 class Gravatar
-  attr_reader :email
+  API_METHODS = [
+    :exists?, :addresses, :user_images, :save_data!, :save_image!, :save_url!, :use_image!, :use_user_image!,
+    :remove_image!, :delete_user_image!, :test, :image_url, :image_data
+  ]
+  autoload :TestCase, File.expand_path('gravatar/test_case', File.dirname(__FILE__))
+  
+  attr_reader :email, :api
+  
+  delegate :rescue_errors, :rescue_errors=, :to => :cache
 
   # Creates a new instance of Gravatar. Valid options include:
   #   :password                   => the password for this account, to be used instead of :api_key (don't supply both)
@@ -31,14 +39,25 @@ class Gravatar
     raise ArgumentError, "Expected :email" unless email
     @options = options || {}
     @email = email
-
+    
     pw_or_key = auth.keys.first || :none
     @cache = Gravatar::Cache.new(self.class.cache, options[:duration] || self.class.duration,
                                  "gravatar-#{email_hash}-#{pw_or_key}", options[:logger] || self.class.logger)
+    self.rescue_errors = options[:rescue_errors]
 
-    if !auth.empty?
-      @api = XMLRPC::Client.new("secure.gravatar.com", "/xmlrpc?user=#{email_hash}", 443, nil, nil, nil, nil, true)
-    end
+    self.auth_with auth unless auth.empty?
+  end
+  
+  def host
+    "secure.gravatar.com"
+  end
+  
+  def url
+    File.join("https://#{host}", path)
+  end
+  
+  def path
+    "/xmlrpc?user=#{email_hash}"
   end
 
   # The duration of the cache for this instance of Gravatar, independent of any other instance
@@ -249,9 +268,22 @@ class Gravatar
   end
 
   def call(name, args_hash = {})
+    raise "No authentication data given" unless @api
     r = @api.call(name, auth.merge(args_hash))
     r = r.with_indifferent_access if r.kind_of?(Hash)
     r
+  end
+  
+  # Authenticates with the given API key or password, returning self.
+  def auth_with(options)
+    @options.delete(:apikey)
+    @options.delete(:api_key)
+    @options.delete(:key)
+    @options.merge! options
+    if !auth.empty?
+      @api = XMLRPC::Client.new(host, path, 443, nil, nil, nil, nil, true)
+    end
+    self
   end
 
   def auth

@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 12 Jan 2012 18:24:30 GMT
+Content-Type: text/xml;charset=utf-8
+Connection: keep-alive
+Set-Cookie: gravatar=gravatartest1234%7C1326997469%7C42587efbd6b763ee850c6df8d4773dce; expires=Fri, 30-Jan-2054 12:48:59 GMT; path=/; domain=.gravatar.com
+Content-Length: 163
+
+<?xml version="1.0"?>
+<methodResponse>
+  <params>
+    <param>
+      <value>
+        <boolean>1</boolean>
+      </value>
+    </param>
+  </params>
+</methodResponse>

@@ -4,15 +4,15 @@ Bundler.setup
 require File.expand_path("../../lib/gravatar", __FILE__)
 require 'rspec'
 
-def image_data
+def mock_image_data
   data = File.read(File.expand_path("../fixtures/image.jpg", __FILE__))
   data.respond_to?(:force_encoding) ? data.force_encoding("BINARY") : data
 end
 
 require 'fakeweb'
-# FakeWeb.allow_net_connect = false
+FakeWeb.allow_net_connect = false
 FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98", :response =>
-        "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +image_data)
+        "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +mock_image_data)
 
 def new_cache
   ActiveSupport::Cache::MemoryStore.new
@@ -29,5 +29,29 @@ class Net::HTTP
   end
 end
 
+Gravatar::TestCase.fixtures_path = File.expand_path("fixtures/responses", File.dirname(__FILE__))
+
+RSpec.configure do |c|
+  c.include Gravatar::TestCase
+end
+
+class XMLRPC::Client
+  def set_debug
+    @http.set_debug_output $stderr
+  end
+  alias _initialize initialize
+  def initialize(*a,&b) _initialize(*a,&b); set_debug; end
+end
+
 require 'yaml'
-$credentials = YAML::load(File.read(File.expand_path("../credentials.yml", __FILE__))).with_indifferent_access
+creds = File.expand_path("../credentials.yml", __FILE__)
+if File.file?(creds)
+  $credentials = YAML::load(File.read(creds)).with_indifferent_access
+else
+  $credentials = {
+    :primary_email => 'gravatartest123@gmail.com',
+    :email => 'gravatartest123@gmail.com',
+    :password => 'aPassword',
+    :email_hash => 'anEmailHash'
+  }.with_indifferent_access
+end
