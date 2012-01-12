@@ -103,4 +103,8 @@ Copyright (c) 2010 Colin MacKenzie IV. See LICENSE for details.
 
 == Contributors
 
-Ben Tillman - github.com/crossroads
+https://github.com/sinisterchipmunk/gravatar/contributors
+
+Also:
+
+{abitdodgy (Mohamad El-Husseini)}[https://github.com/abitdodgy] for https://github.com/sinisterchipmunk/gravatar/pull/7
