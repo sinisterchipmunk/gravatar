@@ -99,7 +99,7 @@ them within an Initializer in config/initializers/any_filename.rb in order to en
 
 == Copyright
 
-Copyright (c) 2010 Colin MacKenzie IV. See LICENSE for details.
+Copyright (c) 2010-2012 Colin MacKenzie IV. See LICENSE for details.
 
 == Contributors
 
