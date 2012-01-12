@@ -1,4 +1,4 @@
-= gravatar-ultimate
+= gravatar-ultimate {<img src="https://secure.travis-ci.org/sinisterchipmunk/gravatar.png" />}[http://travis-ci.org/sinisterchipmunk/gravatar]
 
 The Ultimate Gravatar Gem!
 
