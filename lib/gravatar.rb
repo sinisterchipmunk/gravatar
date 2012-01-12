@@ -79,7 +79,6 @@ class Gravatar
   def addresses
     cache('addresses') do
       call('grav.addresses').inject({}) do |hash, (address, info)|
-        p hash, address, info
         hash[address] = info.merge(:rating => rating(info[:rating]))
         hash
       end
