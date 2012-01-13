@@ -14,3 +14,4 @@ gemfile:
 
 env:
   - DEBUG=1
+
