@@ -18,7 +18,7 @@ require File.expand_path("../gravatar/cache", __FILE__)
 class Gravatar
   API_METHODS = [
     :exists?, :addresses, :user_images, :save_data!, :save_image!, :save_url!, :use_image!, :use_user_image!,
-    :remove_image!, :delete_user_image!, :test, :image_url, :image_data
+    :remove_image!, :delete_user_image!, :test, :image_url, :image_data, :signup_url
   ]
   autoload :TestCase, File.expand_path('gravatar/test_case', File.dirname(__FILE__))
   
@@ -205,6 +205,15 @@ class Gravatar
     sub = secure ? "secure" : "www"
 
     "#{proto}://#{sub}.gravatar.com/avatar/#{email_hash}#{extension_for_image(options)}#{query_for_image(options)}"
+  end
+
+  # Returns the URL for Gravatar's signup form, with the user's email pre-filled. Options include:
+  #
+  #   :locale                if non-nil, wil be used to prefix the URL. Example: :en
+  def signup_url(options = {})
+    locale_prefix = options[:locale] ? "#{options[:locale]}." : ''
+
+    "https://#{locale_prefix}gravatar.com/site/signup/#{CGI.escape(email)}"
   end
 
   # Returns the image data for this user's gravatar image. This is the same as reading the data at #image_url. See
