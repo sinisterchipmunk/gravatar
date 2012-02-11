@@ -173,5 +173,13 @@ describe Gravatar do
       )
       combinations.should include(image_url(:ssl => true, :default => "identicon", :size => 80, :rating => :g))
     end
+    
+    it "should return gravatar signup_url" do
+      signup_url.should == "https://gravatar.com/site/signup/gravatartest123%40gmail.com"
+    end
+
+    it "should return gravatar signup_url with locale" do
+      signup_url(:locale => :en).should == "https://en.gravatar.com/site/signup/gravatartest123%40gmail.com"      
+    end
   end
 end
