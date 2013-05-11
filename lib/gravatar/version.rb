@@ -1,6 +1,6 @@
 class Gravatar
   module Version
-    MAJOR, MINOR, TINY = 1, 0, 3
+    MAJOR, MINOR, TINY = 2, 0, 0
     STRING = [MAJOR, MINOR, TINY].join('.')
   end
   
