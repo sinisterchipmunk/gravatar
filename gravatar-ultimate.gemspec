@@ -26,11 +26,12 @@ rather than just a URL to that data. This saves you the extra step of having to 
   s.summary = %q{A gem for interfacing with the entire Gravatar API: not just images, but the XML-RPC API too!}
   s.test_files = `git ls-files -- spec/*`.split("\n")
   s.executables = `git ls-files -- bin/*`.split("\n")
+  
+  s.add_dependency('activesupport', '>= 2.3.14')
 
   # s.add_runtime_dependency('sc-core-ext', ">= 1.2.0")
   s.add_development_dependency('rspec', ">= 1.3.0")
   s.add_development_dependency('fakeweb', ">= 1.2.8")
-  s.add_development_dependency('activesupport', '>= 2.3.14')
   s.add_development_dependency('i18n', '~> 0.6.0')
   s.add_development_dependency('rake', '~> 0.9.2.2')
   s.add_development_dependency('rdoc', '~> 3.11')
