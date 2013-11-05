@@ -1,5 +1,5 @@
 PATH
-  remote: /Users/colin/projects/gems/gravatar
+  remote: ..
   specs:
     gravatar-ultimate (2.0.0)
       activesupport (>= 2.3.14)
