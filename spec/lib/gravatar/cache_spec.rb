@@ -61,7 +61,7 @@ describe Gravatar::Cache do
         before(:each) { subject.logger = StringIO.new("") }
         
         it "should recover" do
-          proc { subject.call(:nothing) { raise "something bad happened" } }.should_not raise_error(RuntimeError)
+          proc { subject.call(:nothing) { raise "something bad happened" } }.should_not raise_error
         end
 
         it "should return the cached copy" do
@@ -72,19 +72,19 @@ describe Gravatar::Cache do
           before(:each) { subject.logger = Object.new }
 
           it "should log it if #error is available" do
-            subject.logger.stub!(:error => nil)
+            subject.logger.stub(:error => nil)
             subject.logger.should_receive(:error).and_return(nil)
             subject.call(:nothing) { raise "something bad happened" }
           end
 
           it "should log it if #write is available" do
-            subject.logger.stub!(:write => nil)
+            subject.logger.stub(:write => nil)
             subject.logger.should_receive(:write).and_return(nil)
             subject.call(:nothing) { raise "something bad happened" }
           end
 
           it "should re-raise the error if no other methods are available" do
-            proc { subject.call(:nothing) { raise "something bad happened" } }.should raise_error(RuntimeError)
+            proc { subject.call(:nothing) { raise "something bad happened" } }.should raise_error
           end
         end
 

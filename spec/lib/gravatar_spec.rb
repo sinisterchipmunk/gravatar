@@ -105,7 +105,7 @@ describe Gravatar do
     before { grav $credentials[:email] }
     
     it "should not raise an error" do
-      proc { grav }.should_not raise_error(ArgumentError)
+      proc { grav }.should_not raise_error
     end
 
     it "should return email_hash" do
