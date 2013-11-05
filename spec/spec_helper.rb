@@ -14,9 +14,19 @@ def mock_image_data
 end
 
 require 'fakeweb'
-FakeWeb.allow_net_connect = false
-FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98", :response =>
-        "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +mock_image_data)
+
+RSpec.configure do |config|
+  config.before do
+    FakeWeb.allow_net_connect = false
+    FakeWeb.register_uri(:get, "http://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98", :response =>
+            "HTTP/1.1 200 OK\nContent-Type: image/jpg\n\n" +mock_image_data)
+  end
+
+  config.after do
+    FakeWeb.allow_net_connect = true
+  end
+end
+
 
 def new_cache
   ActiveSupport::Cache::MemoryStore.new
