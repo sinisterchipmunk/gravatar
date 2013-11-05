@@ -1,4 +1,4 @@
-= gravatar-ultimate {<img src="https://secure.travis-ci.org/sinisterchipmunk/gravatar.png" />}[http://travis-ci.org/sinisterchipmunk/gravatar]
+= gravatar-ultimate {<img src="https://secure.travis-ci.org/sinisterchipmunk/gravatar.png" />}[http://travis-ci.org/sinisterchipmunk/gravatar] {<img src="https://codeclimate.com/github/sinisterchipmunk/gravatar.png" />}[https://codeclimate.com/github/sinisterchipmunk/gravatar] {<img src="https://coveralls.io/repos/sinisterchipmunk/gravatar/badge.png" alt="Coverage Status" />}[https://coveralls.io/r/sinisterchipmunk/gravatar]
 
 The Ultimate Gravatar Gem!
 
