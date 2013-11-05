@@ -2,7 +2,6 @@ rvm:
   - 1.9.3
   - 2.0.0
   - jruby
-  - rbx
   - ruby-head
 
 gemfile:
@@ -18,6 +17,4 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby
-    - rvm: rbx
     - rvm: 1.9.3
-
