@@ -29,6 +29,7 @@ rather than just a URL to that data. This saves you the extra step of having to 
   
   s.add_dependency('activesupport', '>= 2.3.14')
   s.add_dependency('rack')
+  s.add_dependency('xmlrpc')
 
   s.add_development_dependency('rspec', ">= 1.3.0")
   s.add_development_dependency('fakeweb', ">= 1.2.8")
