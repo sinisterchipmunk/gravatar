@@ -8,7 +8,6 @@ require File.expand_path("../gravatar/cache", __FILE__)
 # Errors usually come with a number and human readable text. Generally the text should be followed whenever possible,
 # but a brief description of the numeric error codes are as follows:
 #
-#     -7  Use secure.gravatar.com
 #     -8  Internal error
 #     -9  Authentication error
 #     -10 Method parameter missing
@@ -49,7 +48,7 @@ class Gravatar
   end
   
   def host
-    "secure.gravatar.com"
+    "www.gravatar.com"
   end
   
   def url

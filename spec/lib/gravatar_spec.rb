@@ -133,7 +133,7 @@ describe Gravatar do
     end
 
     it "should return gravatar image_url with SSL" do
-      image_url(:ssl => true).should == "https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98"
+      image_url(:ssl => true).should == "https://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98"
     end
 
     it "should return gravatar image_url with size" do
@@ -166,10 +166,10 @@ describe Gravatar do
 
     it "should return gravatar image_url with SSL and default and size and rating" do
       combinations = %w(
-        https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?default=identicon&size=80&rating=g
-        https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?size=80&rating=g&default=identicon
-        https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?size=80&default=identicon&rating=g
-        https://secure.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?rating=g&size=80&default=identicon
+        https://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?default=identicon&size=80&rating=g
+        https://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?size=80&rating=g&default=identicon
+        https://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?size=80&default=identicon&rating=g
+        https://www.gravatar.com/avatar/ef23bdc1f1fb9e3f46843a00e5832d98?rating=g&size=80&default=identicon
       )
       combinations.should include(image_url(:ssl => true, :default => "identicon", :size => 80, :rating => :g))
     end
